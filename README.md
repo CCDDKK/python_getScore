@@ -8,7 +8,8 @@ python利用selenium爬取掌上高考网
 ![1670661176064](https://github.com/ccddkk9/python_getScore/blob/main/img/1670661176064.png)
 这样 放置。
 
-谷歌浏览器版本要和chromedriver.exe 版本接近，要是不一样 百度去搜索chromedriver下载就好。
+谷歌浏览器版本要和chromedriver.exe 版本接近就行，要是不一样 百度去搜索chromedriver下载就好。chromedriver的链接：
+https://chromedriver.chromium.org/downloads
 
 下面是我的版本。如果是这个版本的浏览器 ，可以用我给的chromedriver.exe 如果不是更新下浏览器就行。
 
