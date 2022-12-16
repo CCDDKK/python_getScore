@@ -16,7 +16,7 @@ https://chromedriver.chromium.org/downloads
 
 准备好后python需要安装几个库  selenium  、 sqlalchemy    、 pandas 用pip安装好！
 
-压缩i包里提供了sql文件 把表创建好！
+提供了sql文件 把表创建好！
 
 然后你就可以运行压缩包里的.py文件了 ，记得把第七行改成你自己的数据库名和密码！
 
