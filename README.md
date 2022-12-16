@@ -12,7 +12,7 @@ python利用selenium爬取掌上高考网
 https://chromedriver.chromium.org/downloads
 
 下面是我的版本。如果是这个版本的浏览器 ，可以用我给的chromedriver.exe 如果不是更新下浏览器就行。
-
+![1670661948106](https://github.com/ccddkk9/python_getScore/blob/main/img/1670661948106.png)
 
 准备好后python需要安装几个库  selenium  、 sqlalchemy    、 pandas 用pip安装好！
 
