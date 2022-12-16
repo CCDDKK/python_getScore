@@ -1,5 +1,5 @@
 # python_getScore
-python利用selenium爬取掌上高考网
+利用python的selenium爬取掌上高考网
 
 
 ## 使用Python模拟人点击浏览器 ，获取高考信息
