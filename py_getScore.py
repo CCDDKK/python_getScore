@@ -2,30 +2,34 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import pandas
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine,text
 # root 后面为密码  最后为数据库
-conn = create_engine('mysql+pymysql://root:csy200206@localhost:3306/college_score')  # 数据库连接语句
+engine = create_engine('mysql+pymysql://root:123456@localhost:3306/college_score')  # 数据库连接语句
 
 
 #  TODO 下面为数据库创建和删除语句
 #   创建表的时候有一个选测等级这个字段 ，其实不要这一列也没关系 ，
 #   但是有个别学校在江苏招生的时候有个要求就是选测等级，没有程序会报数据库的错误。
-# sql = '''DROP TABLE IF EXISTS `schools_score`'''
-# conn.execute(sql)
-#
-# sql = '''CREATE TABLE `schools_score`  (
-#   `年份` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
-#   `录取批次` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
-#   `招生类型` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
-#   `最低分/最低位次` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
-#   `省控线` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
-#   `专业组` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
-#   `选科要求` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
-#   `学校` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
-#   `地区` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
-#   `选测等级` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL
-# );'''
-# conn.execute(sql)
+sql = '''DROP TABLE IF EXISTS `schools_score`'''
+
+with engine.connect() as connection:
+    connection.execute(text(sql))
+    connection.commit()
+sql = '''CREATE TABLE `schools_score`  (
+  `年份` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  `录取批次` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  `招生类型` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  `最低分/最低位次` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  `省控线` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  `专业组` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  `选科要求` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  `学校` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  `地区` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  `选测等级` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL
+);'''
+with engine.connect() as connection:
+    connection.execute(text(sql))
+    connection.commit()
 
 def school(urls, time1):
     # # # # # # # # # # #
@@ -47,15 +51,13 @@ def school(urls, time1):
         return
     # 获取学校名
     html_school = driver.find_element(By.XPATH,
-                                      '//*[@id="root"]/div/div[1]/div/div/div[1]/div[2]/div[1]/div[3]/div[2]/div['
-                                      '1]/span').get_attribute('innerHTML')
+                                      '//*[@id="root"]/div/div[1]/div/div/div[1]/div[2]/div[3]/div/div[1]/div/div[1]/div[1]/div/div[1]/div[1]').get_attribute('innerHTML')
     # 点击 出现所有省会选择
     driver.find_element(By.XPATH, '//*[@id="proline"]/div[1]/div/div[1]/div[1]/div/div').click()
     # 通过上行的点击才会产生这个html的元素  获取ul 得到里面li
-    ul = driver.find_element(By.XPATH, '/html/body/div/div/div[1]/div/div/div[1]/div[3]/div[1]/div[1]/div/div[1]/div['
-                                       '1]/div/div[1]/div[2]/div/div/div/ul')
+    ul = driver.find_element(By.XPATH, '//*[@id="proline"]/div/div[1]/div/div[1]/div[2]/div/div/div')
     # 获取学校有多少个省份分数线 TODO 这里获取一般不会出问题很少，因为浏览器没反应过来导致获取地区为1
-    lis = ul.find_elements(By.XPATH, 'li')
+    lis = ul.find_elements(By.XPATH, 'div')
     length = len(lis)
     # 省级  会全部遍历
     for j in range(1, length + 1):
@@ -65,29 +67,28 @@ def school(urls, time1):
         # 需要慢一点  程序和网页速度不匹配会出错
         time.sleep(time1)
         # 点击列表里面每一个
-        driver.find_element(By.XPATH, '/html/body/div/div/div[1]/div/div/div[1]/div[3]/div[1]/div[1]/div/div['
-                                      '1]/div[1]/div/div[1]/div[2]/div/div/div/ul/li[' + str(j) + ']').click()
+        driver.find_element(By.XPATH, '//*[@id="proline"]/div/div[1]/div/div[1]/div[2]/div/div/div/div[' + str(j) + ']').click()
         # 获取省会
-        html_province = driver.find_element(By.XPATH, '//*[@id="proline"]/div[1]/div/div[1]/div[1]/div/div/div') \
-            .get_attribute('innerHTML')
+        html_province = driver.find_element(By.XPATH, '//*[@id="proline"]/div/div[1]/div/div[1]/div[1]/div/div/div').get_attribute('innerHTML')
         # 获取分数信息表格
-        html_table = driver.find_element(By.XPATH, '//*[@id="proline"]/div[2]/div[1]') \
-            .get_attribute('innerHTML')
+        time.sleep(time1)
+        html_table = driver.find_element(By.XPATH, '//*[@id="proline"]/div/div[2]').get_attribute('innerHTML')
         # 写入html里面保存
         open("table.html", 'w').write(html_table)
         # 解析放入dfs TODO pandas库会自动解析table标签很方便
-        dfs = pandas.read_html("table.html", encoding='gbk')
+        dfs = pandas.read_html("table.html", encoding='utf-8')
         for k in dfs:
             # 表中多加两列 分别为学校和地区
             k['学校'] = html_school
             k['地区'] = html_province
+            k = k.drop(columns=['录取率'])
             # 存入csv表格 方便放入数据库
             k.to_csv("school.csv", encoding='utf-8_sig', index=False)
             # 读取本地CSV文件 准备存入数据库
             df = pandas.read_csv("school.csv", sep=',')
             # 将新建的DataFrame储存为MySQL中的数据表，不储存index列 表名为 schools_score
             # TODO 这里自动放入数据库 pandas库的强大
-            df.to_sql('schools_score', conn, index=False, if_exists='append')
+            df.to_sql('schools_score', engine, index=False, if_exists='append')
 
     print(html_school + '一共' + str(length) + "地区    数据库写入完成 正在关闭浏览器")
     print(urls + '\n')
@@ -103,4 +104,4 @@ for i in range(30, 1050):  # 本科从30 到1050 后面也还有本科 这区域
     url = 'https://www.gaokao.cn/school/' + str(i) + '/provinceline/'
     # 传入url 和 时间  单位为秒 建议设置为0.5秒
     #   TODO  0.5秒 左右比较好 根据自己电脑配置和网速自行考虑吧 （建议0.2s以上）
-    school(url, 0.5)
+    school(url, 0.3)
