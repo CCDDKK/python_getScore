@@ -5,8 +5,6 @@ import pandas
 from sqlalchemy import create_engine,text
 # root 后面为密码  最后为数据库
 engine = create_engine('mysql+pymysql://root:123456@localhost:3306/college_score')  # 数据库连接语句
-
-
 #  TODO 下面为数据库创建和删除语句
 #   创建表的时候有一个选测等级这个字段 ，其实不要这一列也没关系 ，
 #   但是有个别学校在江苏招生的时候有个要求就是选测等级，没有程序会报数据库的错误。
@@ -70,8 +68,9 @@ def school(urls, time1):
         driver.find_element(By.XPATH, '//*[@id="proline"]/div/div[1]/div/div[1]/div[2]/div/div/div/div[' + str(j) + ']').click()
         # 获取省会
         html_province = driver.find_element(By.XPATH, '//*[@id="proline"]/div/div[1]/div/div[1]/div[1]/div/div/div').get_attribute('innerHTML')
-        # 获取分数信息表格
+        # 这里获取一般不会出问题很少，因为浏览器还没加载出来表格
         time.sleep(time1)
+        # 获取分数信息表格
         html_table = driver.find_element(By.XPATH, '//*[@id="proline"]/div/div[2]').get_attribute('innerHTML')
         # 写入html里面保存
         open("table.html", 'w').write(html_table)
@@ -81,6 +80,7 @@ def school(urls, time1):
             # 表中多加两列 分别为学校和地区
             k['学校'] = html_school
             k['地区'] = html_province
+            # 删除不需要的列
             k = k.drop(columns=['录取率'])
             # 存入csv表格 方便放入数据库
             k.to_csv("school.csv", encoding='utf-8_sig', index=False)
